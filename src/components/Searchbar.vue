@@ -10,3 +10,10 @@
         name : "Searchbar"
     }
 </script>
+
+<style>
+    .searchbar__container {
+        width : 100%;
+        margin-bottom : 30px;
+    }
+</style>
