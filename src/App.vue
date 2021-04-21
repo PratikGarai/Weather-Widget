@@ -1,21 +1,26 @@
 <template>
-  <div class="main">
+  <div id="app1" :class='typeof weather.main!="undefined" && weather.main.temp>20?"warm":""'>
     <main>
-
       <div class="search">
-        <input type="text" class="search__input" placeholder="Search... "/>
+        <input 
+          type="text" 
+          class="search__input" 
+          placeholder="Search... "
+          v-model = "query"
+          @keypress = "fetchWeather"
+        />
       </div>
 
-      <div class="location">
+      <div class="location" v-if='typeof weather.main!="undefined"'>
         <div class="location__inner">
-          <div class="location__name">Kolkata</div>
-          <div class="location__date">Sunday 21 April 2021</div>
+          <div class="location__name">{{weather.name}}, {{weather.sys.country}}</div>
+          <div class="location__date">{{ dateBuilder() }}</div>
         </div>
       </div>
 
-      <div class="weather">
-        <div class="weather__temp">25ºC</div>
-        <div class="weather__climate">Rain</div>
+      <div class="weather" v-if="typeof weather.main!='undefined'">
+        <div class="weather__temp">{{Math.round(weather.main.temp)}}ºc</div>
+        <div class="weather__climate">{{weather.weather[0].main}}</div>
       </div>
     </main>
   </div>
@@ -28,37 +33,61 @@ export default {
   name: 'App',
   data() {
     return {
-      api_key : OPENWEATHERMAP_API_KEY
+      api_key : OPENWEATHERMAP_API_KEY, 
+      url_base : 'http://api.openweathermap.org/data/2.5',
+      query : '',
+      weather : {},
+    }
+  }, 
+  methods : {
+    fetchWeather(e) {
+      if(e.key=="Enter")
+        fetch(`${this.url_base}/weather?q=${this.query}&units=metric&APPID=${this.api_key}`)
+        .then(res => res.json())
+        .then(res => this.setResults(res));
+    }, 
+    setResults(res) {
+      this.weather = res;
+    }, 
+    dateBuilder () {
+      let d = new Date();
+      let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      let day = days[d.getDay()];
+      let date = d.getDate();
+      let month = months[d.getMonth()];
+      let year = d.getFullYear();
+      return `${day} ${date} ${month} ${year}`;
     }
   }
 }
 </script>
 
 <style>
-#app {
+#app1 {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-size : cover;
+  background-position : bottom;
+  transition : 1s;
+  background-image : url('./assets/cold.jpg');
+}
+
+main {
+  min-height : 100vh;
+  padding : 25px;
+  background-image : linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.75));
+  transition : 1s;
+}
+
+#app1.warm {
+  transition : 1s;
+  background-image : url('./assets/warm.jpg');
 }
 
 * {
   margin : 0;
   padding : 0;
   box-sizing : border-box;
-}
-
-#app {
-  background-image : url('./assets/cold.jpg');
-  background-size : cover;
-  background-position : bottom;
-  transition : 0.4s;
-}
-
-.main {
-  min-height : 100vh;
-  padding : 25px;
-
-  background-image : linear-gradient(to bottom, rgba(0,0,0,0.25), rgba(0,0,0,0.75));
 }
 
 .search {
