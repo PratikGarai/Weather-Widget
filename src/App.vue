@@ -1,17 +1,11 @@
 <template>
   <div class="main">
-    <Searchbar />
   </div>
 </template>
 
 <script>
-import Searchbar from './components/Searchbar.vue';
-
 export default {
   name: 'App',
-  components: {
-    Searchbar, 
-  }
 }
 </script>
 
@@ -29,7 +23,7 @@ export default {
 }
 
 #app {
-  background-image : url('./assets/hot.jpg');
+  background-image : url('./assets/cold.jpg');
   background-size : cover;
   background-position : bottom;
   transition : 0.4s;
